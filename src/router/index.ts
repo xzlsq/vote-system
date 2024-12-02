@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-
+import SelectCreate from '@/views/SelectCreate.vue'
 console.log(import.meta)
 
 const router = createRouter({
@@ -11,15 +11,29 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+      children: [
+        {
+          path: 'select-create',
+          component: SelectCreate
+        },
+        {
+          path: 'me',
+          component: () => import('../views/Me.vue')
+        }
+      ]
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      path: '/create',
+      component: () => import('../views/CreateVote.vue'),
     },
+    {
+      path: '/vote/:id',
+      component: () => import('../views/Vote.vue'),
+    },
+    {
+      path: '/my-votes',
+      component: () => import('../views/MyVotes.vue'),
+    }
   ],
 })
 
