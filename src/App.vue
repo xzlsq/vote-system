@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { useVoteStore } from '@/stores/vote';
+var voteStore = useVoteStore()
+
+// 请求结果获取到再加载页面
+await voteStore.getUserInfo()
+
 </script>
 
 <template>
-  <RouterView />
+  <div class="h-[100vh] bg-gray-100">
+    <RouterView />
+  </div>
 </template>

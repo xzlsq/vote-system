@@ -4,8 +4,22 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
+const port = 8008
+
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      // '/': 'http://localhost:8000',
+      '/api': {
+        target: 'http://localhost:8008',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/account': 'http://localhost:' + port + '/',
+      '/vote': 'http://localhost:' + port + '/',
+    }
+  },
   plugins: [
     vue(),
     vueDevTools(),

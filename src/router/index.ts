@@ -13,7 +13,13 @@ const router = createRouter({
       component: HomeView,
       children: [
         {
+          path: '',
+          redirect: 'select-create', // 重定向方法一
+        },
+        {
           path: 'select-create',
+          // // 重定向方法二(此处使用路径别名实现类似重定向的功能)
+          // alias: '', // 子路由的路径为空则表示父路由的路径
           component: SelectCreate
         },
         {
@@ -33,6 +39,10 @@ const router = createRouter({
     {
       path: '/my-votes',
       component: () => import('../views/MyVotes.vue'),
+    },
+    {
+      path: '/login',
+      component: () => import('../views/login.vue'),
     }
   ],
 })
