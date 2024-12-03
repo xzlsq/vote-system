@@ -14,7 +14,7 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: 'select-create', // 重定向方法一
+          redirect: '/select-create', // 重定向方法一
         },
         {
           path: 'select-create',
