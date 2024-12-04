@@ -32,3 +32,13 @@ export function useLogin() {
 
     return true
 }
+
+// export type VoteInfo = {
+//     userId: string,
+//     voteId: number,
+//     title: string,
+//     desc: string,
+//     deadline: string,
+//     anonymous: number | boolean,
+//     multiple: number | boolean
+// }
