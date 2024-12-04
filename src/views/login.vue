@@ -21,7 +21,7 @@ async function login() {
         })
 
         userStore.user = user.data.result
-        console.log(user)
+        // console.log(userStore.user)
         router.replace(next)
     } catch (e) {
         alert('login failed')
@@ -31,9 +31,20 @@ async function login() {
 </script>
 
 <template>
-    <div class="flex flex-col">
-        <input class="border" type="text" v-model="userName">
-        <input class="border" type="password" v-model="password">
-        <button @click="login">登入</button>
+    <h1 class="text-2xl flex items-center p-4">
+        <RouterLink to="/" class="ml-1 flex items-center">
+            <el-icon class="relative top-px">
+                <ArrowLeftBold />
+            </el-icon>
+        </RouterLink>
+        <span class="ml-4 relative top-px">登入</span>
+    </h1>
+    <div class="flex flex-col p-4 space-y-4">
+        <input class="border h-8 outline-none rounded border-gray-400 px-2" type="text" v-model="userName"
+            placeholder="用户名">
+        <input class="border h-8 outline-none rounded border-gray-400 px-2" type="password" v-model="password"
+            placeholder="密码">
+        <button @click="login()"
+            class="block mx-auto w-[90%] h-10 rounded-md border border-blue-500 text-blue-500">登入</button>
     </div>
 </template>
