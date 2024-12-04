@@ -1,60 +1,62 @@
 <template>
-    <h1 class="font-bold text-2xl flex items-center p-4">
-        <RouterLink to="/" class="ml-1 flex items-center">
-            <el-icon class="relative top-px">
-                <ArrowLeftBold />
-            </el-icon>
-        </RouterLink>
-        <span class="ml-4 relative top-px">创建{{ type }}投票</span>
-    </h1>
-    <div class="p-2 overflow-auto">
-        <div class="bg-white space-y-3 overflow-auto">
-            <div class="flex flex-col pr-1 ml-1">
-                <input type="text" v-model="title" class="w-full border-b rounded outline-none my-1 p-1 text-2xl"
-                    name="title" placeholder="投票标题">
-                <input type="text" v-model="desc" class="w-full border-b rounded outline-none my-1 p-1" name=""
-                    placeholder="补充描述(选填)">
+    <div>
+        <h1 class="font-bold text-2xl flex items-center p-4">
+            <RouterLink to="/" class="ml-1 flex items-center">
+                <el-icon class="relative top-px">
+                    <ArrowLeftBold />
+                </el-icon>
+            </RouterLink>
+            <span class="ml-4 relative top-px">创建{{ type }}投票</span>
+        </h1>
+        <div class="p-2 overflow-auto">
+            <div class="bg-white space-y-3 overflow-auto">
+                <div class="flex flex-col pr-1 ml-1">
+                    <input type="text" v-model="title" class="w-full border-b rounded outline-none my-1 p-1 text-2xl"
+                        name="title" placeholder="投票标题">
+                    <input type="text" v-model="desc" class="w-full border-b rounded outline-none my-1 p-1" name=""
+                        placeholder="补充描述(选填)">
+                </div>
+                <div v-for="(option, idx) of options" class="flex items-center ml-1" :key="idx">
+                    <span @click="deleteOption(idx)"
+                        class="cursor-pointer w-5 h-5 flex items-center text-white justify-center bg-red-500 rounded-full shrink-0">
+                        <el-icon :size="14" color="#ffffff">
+                            <Minus />
+                        </el-icon>
+                    </span>
+                    <input type="text" v-model="options[idx]" class="w-full border rounded outline-none m-1 p-1"
+                        placeholder="选项">
+                </div>
+                <button @click="addOption" class="flex gap-2 items-center ml-1">
+                    <span
+                        class="cursor-pointer w-5 h-5 flex items-center text-white justify-center bg-sky-500 rounded-full shrink-0">
+                        <el-icon :size="14" color="#ffffff">
+                            <Plus />
+                        </el-icon>
+                    </span>
+                    <span class="my-1 text-sky-500">添加选项</span>
+                </button>
             </div>
-            <div v-for="(option, idx) of options" class="flex items-center ml-1" :key="idx">
-                <span @click="deleteOption(idx)"
-                    class="cursor-pointer w-5 h-5 flex items-center text-white justify-center bg-red-500 rounded-full shrink-0">
-                    <el-icon :size="14" color="#ffffff">
-                        <Minus />
-                    </el-icon>
-                </span>
-                <input type="text" v-model="options[idx]" class="w-full border rounded outline-none m-1 p-1"
-                    placeholder="选项">
-            </div>
-            <button @click="addOption" class="flex gap-2 items-center ml-1">
-                <span
-                    class="cursor-pointer w-5 h-5 flex items-center text-white justify-center bg-sky-500 rounded-full shrink-0">
-                    <el-icon :size="14" color="#ffffff">
-                        <Plus />
-                    </el-icon>
-                </span>
-                <span class="my-1 text-sky-500">添加选项</span>
-            </button>
-        </div>
 
-        <div class="divide-y my-4 px-1 bg-white overflow-auto">
-            <div class="flex items-center justify-between h-12">
-                <h1>截至日期</h1>
-                <!-- <input type="date"> -->
-                <el-date-picker xstyle="width: 170px;" class="!w-44" format="YYYY-MM-DD HH:mm" v-model="deadline"
-                    type="datetime" placeholder="请截至日期" />
+            <div class="divide-y my-4 px-1 bg-white overflow-auto">
+                <div class="flex items-center justify-between h-12">
+                    <h1>截至日期</h1>
+                    <!-- <input type="date"> -->
+                    <el-date-picker xstyle="width: 170px;" class="!w-44" format="YYYY-MM-DD HH:mm" v-model="deadline"
+                        type="datetime" placeholder="请截至日期" />
+                </div>
+                <div class="flex items-center justify-between h-12">
+                    <h1>匿名投票</h1>
+                    <el-switch v-model="anonymous" size="large" />
+                </div>
+                <div class="flex items-center justify-between h-12 hidden">
+                    <h1>限制传播</h1>
+                    <el-switch v-model="spread" size="large" />
+                </div>
             </div>
-            <div class="flex items-center justify-between h-12">
-                <h1>匿名投票</h1>
-                <el-switch v-model="anonymous" size="large" />
-            </div>
-            <div class="flex items-center justify-between h-12 hidden">
-                <h1>限制传播</h1>
-                <el-switch v-model="spread" size="large" />
-            </div>
-        </div>
 
-        <div @click="create" class="w-full flex justify-center">
-            <button class="w-[90%] h-10 bg-sky-400 rounded-md text-white">完成</button>
+            <div @click="create" class="w-full flex justify-center">
+                <button class="w-[90%] h-10 bg-sky-400 rounded-md text-white">完成</button>
+            </div>
         </div>
     </div>
 </template>
@@ -65,18 +67,14 @@ import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import { useVoteStore } from '@/stores/vote';
 import axios from 'axios';
+import { useLogin } from './hooks';
 
 var voteStore = useVoteStore()
 var router = useRouter()
 var route = useRoute()
 var type = computed(() => route.query.type == 'single' ? '单选' : '多选')
 
-if (voteStore.user == null) {
-    // 使用push需要连续点两次返回才能回到进入createVote之前的页面
-    // 如果点慢了则会再次进入login页面，因此用replace，覆盖createVote的浏览记录
-    console.log(route)
-    router.replace('/login?next=' + route.fullPath)
-}
+useLogin()
 
 var multiple = type.value == '多选'
 var title = ref('')

@@ -5,3 +5,7 @@
 /* input {
     @apply border rounded focus:ring outline-none;
 } */
+
+#__vue-devtools-container__ {
+    display: none;
+}
