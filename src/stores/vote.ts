@@ -8,7 +8,8 @@ export const useVoteStore = defineStore('vote', () => {
   async function getUserInfo() {
     try {
       var userInfo = await axios.get('/account/current-user')
-      user.value = userInfo
+      user.value = userInfo.data.result
+      // console.log(user.value)
     } catch(e) {
       if (e.isAxiosError) {
         console.log('user no login.')
