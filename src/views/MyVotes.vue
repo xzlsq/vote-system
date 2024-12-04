@@ -70,13 +70,21 @@
 import axios from 'axios';
 import { ref } from 'vue';
 import { useLogin, useSelectOne } from './hooks';
-import { useVoteStore } from '@/stores/vote';
+
+type VoteInfo = {
+    userId: string,
+    voteId: number,
+    title: string,
+    desc: string,
+    deadline: string,
+    anonymous: number | boolean,
+    multiple: number | boolean
+}
 
 var isLogin = useLogin()
 
-var voteStore = useVoteStore()
 var res = null
-var myVotes = ref([])
+var myVotes = ref<VoteInfo[]>([])
 if (isLogin) {
     res = await axios.get('/vote')
     myVotes.value = res.data.result
