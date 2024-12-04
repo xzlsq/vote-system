@@ -1,5 +1,5 @@
 <template>
-    <h1 class="font-bold text-2xl flex items-center p-4 text-zinc-600">
+    <h1 class="font-bold text-2xl flex items-center p-4">
         <RouterLink to="/" class="ml-1 flex items-center">
             <el-icon class="relative top-px">
                 <ArrowLeftBold />
@@ -40,8 +40,8 @@
             <div class="flex items-center justify-between h-12">
                 <h1>截至日期</h1>
                 <!-- <input type="date"> -->
-                <el-date-picker style="width: 170px;" format="YYYY-MM-DD HH:mm" v-model="deadline" type="datetime"
-                    placeholder="请截至日期" />
+                <el-date-picker xstyle="width: 170px;" class="!w-44" format="YYYY-MM-DD HH:mm" v-model="deadline"
+                    type="datetime" placeholder="请截至日期" />
             </div>
             <div class="flex items-center justify-between h-12">
                 <h1>匿名投票</h1>

@@ -1,6 +1,6 @@
 <template>
     <div class="w-full">
-        <h1 class="text-2xl p-4 text-zinc-600">我的</h1>
+        <h1 class="text-2xl p-4">我的</h1>
         <div class="space-y-6">
             <div class="flex items-center gap-2 ml-4 h-[120px]">
                 <img class="rounded-full" src="https://dummyimage.com/64x64/000/fff" alt="">

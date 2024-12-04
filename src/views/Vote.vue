@@ -1,10 +1,10 @@
 <template>
-    <h1 class="font-bold text-2xl flex items-center p-4 text-zinc-600">
-        <RouterLink to="/" class="ml-1 flex items-center">
+    <h1 class="font-bold text-2xl flex items-center p-4">
+        <button @click="router.go(-1)" class="ml-1 flex items-center">
             <el-icon class="relative top-px">
                 <ArrowLeftBold />
             </el-icon>
-        </RouterLink>
+        </button>
         <span class="ml-4 relative top-px">腾讯投票</span>
     </h1>
     <div class="p-2 bg-gray-100 h-[100vh]">
@@ -44,9 +44,10 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref, computed, reactive } from 'vue'
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 var route = useRoute()
+var router = useRouter()
 var id = route.params.id
 
 var res = await axios.get(`/vote/${id}`)
