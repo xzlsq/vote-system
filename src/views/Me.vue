@@ -1,13 +1,37 @@
 <template>
-    <div>
-        <div class="flex items-center gap-2">
-            <img class="rounded-full" src="https://dummyimage.com/32x32/000/fff" alt="">
-            <span>nisekoi</span>
-        </div>
-        <div>
-            <RouterLink to="/my-votes" class="block">我的投票</RouterLink>
-            <RouterLink to="" class="block">个人设置</RouterLink>
-            <RouterLink to="" class="block">反馈建议</RouterLink>
+    <div class="w-full">
+        <h1 class="text-2xl p-4 text-zinc-600">我的</h1>
+        <div class="space-y-6">
+            <div class="flex items-center gap-2 ml-4 h-[120px]">
+                <img class="rounded-full" src="https://dummyimage.com/64x64/000/fff" alt="">
+                <span>nisekoi</span>
+            </div>
+            <div class="flex flex-col divide-y">
+                <RouterLink class="hover:bg-neutral-200 h-14 bg-white flex items-center p-4" to="/my-votes">
+                    我的投票
+                    <span class="ml-auto relative top-px">
+                        <el-icon>
+                            <ArrowRightBold />
+                        </el-icon>
+                    </span>
+                </RouterLink>
+                <RouterLink class="hover:bg-neutral-200 h-14 bg-white flex items-center p-4" to="">
+                    个人设置
+                    <span class="ml-auto relative top-px">
+                        <el-icon>
+                            <ArrowRightBold />
+                        </el-icon>
+                    </span>
+                </RouterLink>
+                <RouterLink class="hover:bg-neutral-200 h-14 bg-white flex items-center p-4" to="">
+                    反馈建议
+                    <span class="ml-auto relative top-px">
+                        <el-icon>
+                            <ArrowRightBold />
+                        </el-icon>
+                    </span>
+                </RouterLink>
+            </div>
         </div>
     </div>
 </template>

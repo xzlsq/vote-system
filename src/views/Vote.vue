@@ -1,13 +1,13 @@
 <template>
+    <h1 class="font-bold text-2xl flex items-center p-4 text-zinc-600">
+        <RouterLink to="/" class="ml-1 flex items-center">
+            <el-icon class="relative top-px">
+                <ArrowLeftBold />
+            </el-icon>
+        </RouterLink>
+        <span class="ml-4 relative top-px">腾讯投票</span>
+    </h1>
     <div class="p-2 bg-gray-100 h-[100vh]">
-        <h1 class="font-bold text-2xl flex items-center py-4">
-            <RouterLink to="/" class="ml-1 flex items-center">
-                <el-icon class="relative top-px">
-                    <ArrowLeftBold />
-                </el-icon>
-            </RouterLink>
-            <span class="ml-4 relative top-px">腾讯投票</span>
-        </h1>
         <div class="my-8 mx-4 relative">
             <h2 class="text-3xl mb-2">{{ voteInfo.vote.title }}</h2>
             <h3>{{ voteInfo.vote.desc }}<span class="text-sky-500">[{{ type }}]</span></h3>

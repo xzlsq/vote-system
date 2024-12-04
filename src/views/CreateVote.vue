@@ -1,15 +1,15 @@
 <template>
+    <h1 class="font-bold text-2xl flex items-center p-4 text-zinc-600">
+        <RouterLink to="/" class="ml-1 flex items-center">
+            <el-icon class="relative top-px">
+                <ArrowLeftBold />
+            </el-icon>
+        </RouterLink>
+        <span class="ml-4 relative top-px">创建{{ type }}投票</span>
+    </h1>
     <div class="p-2 overflow-auto">
         <div class="bg-white space-y-3 overflow-auto">
             <div class="flex flex-col pr-1 ml-1">
-                <h1 class="font-bold text-2xl flex items-center py-4">
-                    <RouterLink to="/" class="ml-1 flex items-center">
-                        <el-icon class="relative top-px">
-                            <ArrowLeftBold />
-                        </el-icon>
-                    </RouterLink>
-                    <span class="ml-4 relative top-px">创建{{ type }}投票</span>
-                </h1>
                 <input type="text" v-model="title" class="w-full border-b rounded outline-none my-1 p-1 text-2xl"
                     name="title" placeholder="投票标题">
                 <input type="text" v-model="desc" class="w-full border-b rounded outline-none my-1 p-1" name=""
@@ -40,7 +40,7 @@
             <div class="flex items-center justify-between h-12">
                 <h1>截至日期</h1>
                 <!-- <input type="date"> -->
-                <el-date-picker style="width: 160px;" format="YYYY-MM-DD HH:mm" v-model="deadline" type="datetime"
+                <el-date-picker style="width: 170px;" format="YYYY-MM-DD HH:mm" v-model="deadline" type="datetime"
                     placeholder="请截至日期" />
             </div>
             <div class="flex items-center justify-between h-12">
