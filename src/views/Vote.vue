@@ -151,9 +151,10 @@ async function handleOptionClick(optionId: number) {
     try {
         // 非匿名，则直接发起请求
         if (!voteInfo.value.vote.anonymous) {
-            await axios.post(`/vote/${voteInfo.value.vote.voteId}`, {
+            let res = await axios.post(`/vote/${voteInfo.value.vote.voteId}`, {
                 optionIds: [optionId]
             })
+            voteInfo.value = res.data.result
         } else if (showCommitButton.value) {
             // 匿名的话，则点击只选择该项，点提交才发送请求，且不可重复发送请求
             let idx = anonymousSelectedOptions.value.indexOf(optionId)
@@ -177,9 +178,10 @@ async function handleOptionClick(optionId: number) {
 
 async function handledAnonymousSubmit() {
     try {
-        await axios.post(`/vote/${voteInfo.value.vote.voteId}`, {
+        let res = await axios.post(`/vote/${voteInfo.value.vote.voteId}`, {
             optionIds: anonymousSelectedOptions.value
         })
+        voteInfo.value = res.data.result
     } catch (e: any) {
         if (e.isAxiosError) {
             console.log('该投票已过期或已经投过')
