@@ -20,30 +20,74 @@
             </div>
 
             <ul class="space-y-2">
-                <li @click="handleOptionClick(option.optionId)" class="cursor-pointer shadow px-4 bg-white "
-                    v-for="(option, idx) of options" :key="idx">
-                    <div class="flex items-center gap-4 h-12 relative">
-                        <span>{{ option.content }}</span>
-                        <span v-if="isVoting && lastClickOptionId == option.optionId" class="flex items-center">
-                            <svg class="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                        </span>
-                        <span v-else>{{ hadSelected[option.optionId] ?
-                            '✔️' : '' }}</span>
-                        <!-- <span class="grow"></span> -->
-                        <span class="ml-auto">{{
-                            OptionVotes[option.optionId].length
+                <li class="" v-for="(option, idx) of options" :key="idx">
+                    <div @click="handleOptionClick(option.optionId)" class="h-12 px-4 shadow bg-white">
+                        <div class="cursor-pointer relative flex items-center gap-4 h-12">
+                            <span>{{ option.content }}</span>
+                            <span v-if="isVoting && lastClickOptionId == option.optionId" class="flex items-center">
+                                <svg class="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+                            </span>
+                            <span v-else>{{ hadSelected[option.optionId] ?
+                                '✔️' : '' }}</span>
+                            <span class="ml-auto">{{
+                                OptionVotes[option.optionId].length
                             }} 票</span>
-                        <span class="w-[60px] text-right">{{ votesRatio[option.optionId] }}</span>
-                        <div class="absolute bottom-0 h-[2px] bg-sky-500 transition-all duration-500"
-                            :style="{ width: votesRatio[option.optionId] }">
+                            <span class="w-[60px] text-right">{{ votesRatio[option.optionId] }}</span>
+                            <div class="absolute bottom-0 h-[2px] bg-sky-500 transition-all duration-500"
+                                :style="{ width: votesRatio[option.optionId] }">
+                            </div>
                         </div>
+                    </div>
+                    <div class="text-clip overflow-hidden text-nowrap gap-1 pt-1 mx-4" v-if="!voteInfo.vote.anonymous">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <img v-for="user of OptionVotes[option.optionId]"
+                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                            :src="user.avatar" alt="">
+                        <el-icon class="align-top inline-block !w-8 !h-8 rounded-full border-gray-300 border shrink-0">
+                            <More />
+                        </el-icon>
                     </div>
                 </li>
             </ul>
@@ -97,6 +141,8 @@ var OptionVotes = computed(() => {
         // 过滤出 票Id等于 选项Id 的票数
         allOptionCnt[option.optionId] = voteInfo.value.userVotes.filter((vote: any) => vote.optionId == option.optionId)
     }
+
+    // console.log(allOptionCnt)
     return allOptionCnt
 })
 // 每个选项的比例 {53: 66%, 54: 23.3%, ...}
