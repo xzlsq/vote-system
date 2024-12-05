@@ -24,13 +24,24 @@
                     v-for="(option, idx) of options" :key="idx">
                     <div class="flex items-center gap-4 h-12 relative">
                         <span>{{ option.content }}</span>
-                        <span>{{ hadSelected[option.optionId] ? '✔️' : '' }}</span>
+                        <span v-if="isVoting && lastClickOptionId == option.optionId" class="flex items-center">
+                            <svg class="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                        </span>
+                        <span v-else>{{ hadSelected[option.optionId] ?
+                            '✔️' : '' }}</span>
                         <!-- <span class="grow"></span> -->
                         <span class="ml-auto">{{
                             OptionVotes[option.optionId].length
                         }} 票</span>
                         <span class="w-[60px] text-right">{{ votesRatio[option.optionId] }}</span>
-                        <div class="absolute bottom-0 h-[2px] bg-sky-500"
+                        <div class="absolute bottom-0 h-[2px] bg-sky-500 transition-all duration-500"
                             :style="{ width: votesRatio[option.optionId] }">
                         </div>
                     </div>
@@ -63,9 +74,17 @@ var res = await axios.get(`/vote/${id}`)
 var voteInfo = ref(res.data.result)
 var options = voteInfo.value.options
 var type = computed(() => voteInfo.value.vote.multiple == 0 ? '单选' : '多选')
-
 // [55, 56, 57]
 var anonymousSelectedOptions = ref<number[]>([])
+
+/**
+ * 实名投票时，是否处于等待投票结果的状态(发送投票请求)
+ * false: 收到请求结果
+ * true: 请求中
+ */
+var isVoting = ref(false)
+// 点击选项时，该选项的ID，用于显示Loading
+var lastClickOptionId = ref(-1)
 
 // 每个选项的票数 {53: [xxx, yyy, zzz], 54:[aaa, bbb, ccc], ...}
 var OptionVotes = computed(() => {
@@ -147,14 +166,19 @@ var hadSelected = computed(() => {
     }
 })
 
+
+
 async function handleOptionClick(optionId: number) {
     try {
         // 非匿名，则直接发起请求
         if (!voteInfo.value.vote.anonymous) {
+            lastClickOptionId.value = optionId
+            isVoting.value = true
             let res = await axios.post(`/vote/${voteInfo.value.vote.voteId}`, {
                 optionIds: [optionId]
             })
             voteInfo.value = res.data.result
+            isVoting.value = false
         } else if (showCommitButton.value) {
             // 匿名的话，则点击只选择该项，点提交才发送请求，且不可重复发送请求
             let idx = -1
