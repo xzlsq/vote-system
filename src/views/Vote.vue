@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="isLogin">
         <h1 class="font-bold text-2xl flex items-center p-4">
             <button @click="router.go(-1)" class="ml-1 flex items-center">
                 <el-icon class="relative top-px">
@@ -39,7 +39,7 @@
                         <!-- <span class="grow"></span> -->
                         <span class="ml-auto">{{
                             OptionVotes[option.optionId].length
-                        }} 票</span>
+                            }} 票</span>
                         <span class="w-[60px] text-right">{{ votesRatio[option.optionId] }}</span>
                         <div class="absolute bottom-0 h-[2px] bg-sky-500 transition-all duration-500"
                             :style="{ width: votesRatio[option.optionId] }">
@@ -62,8 +62,11 @@
 <script setup lang="ts">
 import { useVoteStore } from '@/stores/vote';
 import axios from 'axios';
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
+import { useLogin } from './hooks';
+
+var isLogin = useLogin()
 
 var route = useRoute()
 var router = useRouter()
@@ -166,8 +169,6 @@ var hadSelected = computed(() => {
     }
 })
 
-
-
 async function handleOptionClick(optionId: number) {
     try {
         // 非匿名，则直接发起请求
@@ -217,4 +218,15 @@ async function handledAnonymousSubmit() {
     }
 }
 
+// 组件挂载后建立webSoket连接
+onMounted(() => {
+    var ws = new WebSocket(`ws://${location.host}/realtime-voteinfo/${id}`)
+
+    ws.onmessage = (e) => {
+        var userVotes = JSON.parse(e.data)
+
+        // 收到新的投票结果后替换旧的投票结果
+        voteInfo.value.userVotes = userVotes
+    }
+})
 </script>

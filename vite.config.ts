@@ -18,6 +18,10 @@ export default defineConfig({
       },
       '/account': 'http://localhost:' + port + '/',
       '/vote': 'http://localhost:' + port + '/',
+      '/realtime-voteinfo': {
+        target: 'http://localhost:' + port + '/',
+        ws: true,
+      }
     }
   },
   plugins: [
