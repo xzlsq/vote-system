@@ -20,17 +20,19 @@
             </div>
 
             <ul class="space-y-2">
-                <li @click="handleOptionClick(option.optionId)"
-                    class="cursor-pointer px-4 relative h-12 flex items-center gap-4 bg-white shadow"
+                <li @click="handleOptionClick(option.optionId)" class="cursor-pointer shadow px-4 bg-white "
                     v-for="(option, idx) of options" :key="idx">
-                    <span>{{ option.content }}</span>
-                    <span>{{ isCurrentUserSelected[option.optionId] ? '✔️' : '' }}</span>
-                    <!-- <span class="grow"></span> -->
-                    <span class="ml-auto">{{
-                        OptionVotes[option.optionId].length
-                    }}票</span>
-                    <span>{{ votesRatio[option.optionId] }}</span>
-                    <div class="absolute bottom-0 h-[2px] bg-sky-500" :style="{ width: votesRatio[option.optionId] }">
+                    <div class="flex items-center gap-4 h-12 relative">
+                        <span>{{ option.content }}</span>
+                        <span>{{ hadSelected[option.optionId] ? '✔️' : '' }}</span>
+                        <!-- <span class="grow"></span> -->
+                        <span class="ml-auto">{{
+                            OptionVotes[option.optionId].length
+                        }} 票</span>
+                        <span class="w-[60px] text-right">{{ votesRatio[option.optionId] }}</span>
+                        <div class="absolute bottom-0 h-[2px] bg-sky-500"
+                            :style="{ width: votesRatio[option.optionId] }">
+                        </div>
                     </div>
                 </li>
             </ul>
@@ -39,9 +41,9 @@
                 <!-- <span>吐个槽</span> -->
             </div>
 
-            <div v-if="showCommitButton" @click="" class="flex justify-center">
-                <button class="w-[90%] h-10 bg-sky-400 rounded-md text-white">提交</button>
-            </div>
+            <button v-if="showCommitButton" @click="handledAnonymousSubmit()"
+                :disabled="anonymousSelectedOptions.length == 0"
+                class="disabled:bg-gray-500 block w-[90%] h-10 bg-sky-400 rounded-md text-white m-auto">提交</button>
         </div>
     </div>
 </template>
@@ -49,7 +51,7 @@
 <script setup lang="ts">
 import { useVoteStore } from '@/stores/vote';
 import axios from 'axios';
-import { computed, reactive } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 
 var route = useRoute()
@@ -58,9 +60,12 @@ var voteStore = useVoteStore()
 var id = route.params.id
 
 var res = await axios.get(`/vote/${id}`)
-var voteInfo = reactive(res.data.result)
-var options = voteInfo.options
-var type = computed(() => voteInfo.vote.multiple == 0 ? '单选' : '多选')
+var voteInfo = ref(res.data.result)
+var options = voteInfo.value.options
+var type = computed(() => voteInfo.value.vote.multiple == 0 ? '单选' : '多选')
+
+// [55, 56, 57]
+var anonymousSelectedOptions = ref<number[]>([])
 
 // 每个选项的票数 {53: [xxx, yyy, zzz], 54:[aaa, bbb, ccc], ...}
 var OptionVotes = computed(() => {
@@ -68,18 +73,22 @@ var OptionVotes = computed(() => {
 
     for (let option of options) {
         // 过滤出 票Id等于 选项Id 的票数
-        allOptionCnt[option.optionId] = voteInfo.userVotes.filter((vote: any) => vote.optionId == option.optionId)
+        allOptionCnt[option.optionId] = voteInfo.value.userVotes.filter((vote: any) => vote.optionId == option.optionId)
     }
     return allOptionCnt
 })
 // 每个选项的比例 {53: 66%, 54: 23.3%, ...}
 var votesRatio = computed(() => {
-    var totalUsers = new Set(voteInfo.userVotes.map((it: any) => it.userId)).size
+    var totalUsers = new Set(voteInfo.value.userVotes.map((it: any) => it.userId)).size
 
     var ratio: any = {}
 
     for (var optionId in OptionVotes.value) {
-        ratio[optionId] = (OptionVotes.value[optionId].length / totalUsers * 100).toFixed(1) + '%'
+        if (totalUsers > 0) {
+            ratio[optionId] = (OptionVotes.value[optionId].length / totalUsers * 100).toFixed(1) + '%'
+        } else {
+            ratio[optionId] = '0%'
+        }
     }
 
     return ratio
@@ -106,43 +115,78 @@ var isCurrentUserSelected = computed(() => {
 // 判断是否展示提交按钮
 var showCommitButton = computed(() => {
     // 非匿名投票不显示
-    if (!voteInfo.vote.anonymous) {
+    if (!voteInfo.value.vote.anonymous) {
         return false
     }
 
     // 该投票过期了不显示
     var now = new Date().toISOString()
-    if (now > voteInfo.vote.deadline) {
+    if (now > voteInfo.value.vote.deadline) {
         return false
     }
 
     // 匿名用户投过了不显示
-    if (voteInfo.vote.anonymous && Object.values(isCurrentUserSelected.value).some((it: any) => it.userId == voteStore.user?.userId)) {
+    if (voteInfo.value.vote.anonymous && Object.values(isCurrentUserSelected.value).some((it: any) => it)) {
         return false
     }
 
     return true
 })
+// 判断该选项是否被当前用户选中，选中了则在对应UI上✔
+var hadSelected = computed(() => {
+    if (voteInfo.value.vote.anonymous && showCommitButton.value) {
+        // console.log('anonymous')
+        // 匿名投票且还未提交投票结果时走这里
+        var res: any = {}
+        for (var id of anonymousSelectedOptions.value) {
+            res[id] = true
+        }
+        return res
+    } else {
+        return isCurrentUserSelected.value
+    }
+})
 
 async function handleOptionClick(optionId: number) {
-    // 非匿名，则直接发起请求
-    if (!voteInfo.vote.anonymous) {
-        try {
-            await axios.post(`/vote/${voteInfo.vote.voteId}`, {
+    try {
+        // 非匿名，则直接发起请求
+        if (!voteInfo.value.vote.anonymous) {
+            await axios.post(`/vote/${voteInfo.value.vote.voteId}`, {
                 optionIds: [optionId]
             })
-        } catch (e: any) {
-            if (e.isAxiosError) {
-                console.log('该投票已过期')
+        } else if (showCommitButton.value) {
+            // 匿名的话，则点击只选择该项，点提交才发送请求，且不可重复发送请求
+            let idx = anonymousSelectedOptions.value.indexOf(optionId)
+            if (idx != -1) {
+                anonymousSelectedOptions.value.splice(idx, 1)
             } else {
-                throw e
+                anonymousSelectedOptions.value.push(optionId)
             }
+            // console.log(anonymousSelectedOptions.value)
+        } else {
+            alert('已经投过就不能再投咯^_^')
         }
-
-    } else {    // 匿名的话，则点击只选择该项，点提交才发送请求，且不可重复发送请求
-
+    } catch (e: any) {
+        if (e.isAxiosError) {
+            console.log('该投票已过期或已经投过')
+        } else {
+            throw e
+        }
     }
 }
 
+async function handledAnonymousSubmit() {
+    try {
+        await axios.post(`/vote/${voteInfo.value.vote.voteId}`, {
+            optionIds: anonymousSelectedOptions.value
+        })
+    } catch (e: any) {
+        if (e.isAxiosError) {
+            console.log('该投票已过期或已经投过')
+        } else {
+            throw e
+        }
+    }
+}
 
 </script>
