@@ -157,8 +157,10 @@ async function handleOptionClick(optionId: number) {
             voteInfo.value = res.data.result
         } else if (showCommitButton.value) {
             // 匿名的话，则点击只选择该项，点提交才发送请求，且不可重复发送请求
-            let idx = anonymousSelectedOptions.value.indexOf(optionId)
-            if (idx != -1) {
+            let idx = -1
+            if (!voteInfo.value.vote.multiple) {
+                anonymousSelectedOptions.value[0] = optionId
+            } else if ((idx = anonymousSelectedOptions.value.indexOf(optionId)) != -1) {
                 anonymousSelectedOptions.value.splice(idx, 1)
             } else {
                 anonymousSelectedOptions.value.push(optionId)
