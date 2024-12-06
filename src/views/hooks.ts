@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted, onUnmounted, ref } from "vue"
+import { onBeforeUnmount, onMounted, onUnmounted, ref, type Ref } from "vue"
 import { useVoteStore } from '@/stores/vote';
 import { useRouter, useRoute } from 'vue-router'
 
@@ -96,4 +96,19 @@ export function useEleSize(eleDom: any, isAnony: boolean) {
     }
 
     return windowSize
+}
+
+export async function useCopyToClipboard(text: string, status: Ref) {
+    var res = ''
+    await navigator.clipboard.writeText(text)
+        .then(() => {
+            status.value = true
+            res = '复制成功'
+        })
+        .catch(err => {
+            status.value = true
+            res = '复制失败'
+        });
+
+    return res
 }
