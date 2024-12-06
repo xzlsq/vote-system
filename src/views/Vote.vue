@@ -1,7 +1,7 @@
 <template>
     <div v-if="isLogin">
         <h1 class="font-bold text-2xl flex items-center p-4">
-            <button @click="router.go(-1)" class="ml-1 flex items-center">
+            <button @click="router.push('/my-votes')" class="ml-1 flex items-center">
                 <el-icon class="relative top-px">
                     <ArrowLeftBold />
                 </el-icon>
@@ -36,56 +36,23 @@
                             </span>
                             <span v-else>{{ hadSelected[option.optionId] ?
                                 '✔️' : '' }}</span>
-                            <span class="ml-auto">{{
-                                OptionVotes[option.optionId].length
-                            }} 票</span>
+                            <span class="ml-auto">{{ OptionVotes[option.optionId].length }} 票</span>
                             <span class="w-[60px] text-right">{{ votesRatio[option.optionId] }}</span>
                             <div class="absolute bottom-0 h-[2px] bg-sky-500 transition-all duration-500"
                                 :style="{ width: votesRatio[option.optionId] }">
                             </div>
                         </div>
                     </div>
-                    <div class="text-clip overflow-hidden text-nowrap gap-1 pt-1 mx-4" v-if="!voteInfo.vote.anonymous">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
+                    <div v-if="!voteInfo.vote.anonymous" ref="avatar" class="flex gap-1 mt-1 mx-4" :class="{
+                        'flex-wrap': showMoreIcon(option.optionId) && showRestAvatar[idx],
+                        'justify-between': showMoreIcon(option.optionId) && !showRestAvatar[idx]
+                    }">
+                        <img v-for="user of visibleAvatars(idx)"
+                            class="align-top inline-block rounded-full w-8 h-8 border-gray-300 border shrink-0"
                             :src="user.avatar" alt="">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
-                            :src="user.avatar" alt="">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
-                            :src="user.avatar" alt="">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
-                            :src="user.avatar" alt="">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
-                            :src="user.avatar" alt="">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
-                            :src="user.avatar" alt="">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
-                            :src="user.avatar" alt="">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
-                            :src="user.avatar" alt="">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
-                            :src="user.avatar" alt="">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
-                            :src="user.avatar" alt="">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
-                            :src="user.avatar" alt="">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
-                            :src="user.avatar" alt="">
-                        <img v-for="user of OptionVotes[option.optionId]"
-                            class="align-top inline-block w-8 h-8 rounded-full border-gray-300 border shrink-0"
-                            :src="user.avatar" alt="">
-                        <el-icon class="align-top inline-block !w-8 !h-8 rounded-full border-gray-300 border shrink-0">
+                        <el-icon v-if="showMoreIcon(option.optionId)"
+                            @click="showRestAvatar[idx] = !showRestAvatar[idx]"
+                            class="align-top !w-8 !h-8 inline-block rounded-full border-gray-300 border shrink-0">
                             <More />
                         </el-icon>
                     </div>
@@ -106,9 +73,9 @@
 <script setup lang="ts">
 import { useVoteStore } from '@/stores/vote';
 import axios from 'axios';
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, useTemplateRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
-import { useLogin } from './hooks';
+import { useEleSize, useLogin } from './hooks';
 
 var isLogin = useLogin()
 
@@ -215,6 +182,37 @@ var hadSelected = computed(() => {
     }
 })
 
+var imgW: number = 32
+var avatarDom = useTemplateRef('avatar')
+// 获取显示头像的元素的尺寸(通过该元素的尺寸决定显示多少头像)
+var size = useEleSize(avatarDom, !voteInfo.value.vote.anonymous)
+var avatarsNum = computed(() => {
+    var n: number = Math.floor((size.value.width + 4) / imgW)
+    return n - 1
+})
+var showRestAvatar = ref<boolean[]>(new Array(options.length).fill(false))
+// 是否要显示 more 图标
+function showMoreIcon(optionId: number) {
+    if (OptionVotes.value[optionId].length > avatarsNum.value) {
+        return true
+    } else {
+        return false
+    }
+}
+
+// 第idx个选项下显示的头像
+function visibleAvatars(optionIdx: number) {
+    var { optionId } = options[optionIdx]
+
+    if (showRestAvatar.value[optionIdx]) {
+        return OptionVotes.value[optionId]
+    } else {
+        return OptionVotes.value[optionId].slice(0, avatarsNum.value)
+    }
+}
+
+
+
 async function handleOptionClick(optionId: number) {
     try {
         // 非匿名，则直接发起请求
@@ -243,6 +241,7 @@ async function handleOptionClick(optionId: number) {
     } catch (e: any) {
         if (e.isAxiosError) {
             console.log('该投票已过期或已经投过')
+            isVoting.value = false
         } else {
             throw e
         }
