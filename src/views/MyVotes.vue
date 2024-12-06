@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isLogin">
+    <div v-if="isLogin" class="h-full">
         <h1 class="font-bold text-2xl flex items-center p-4">
             <RouterLink to="/me" class="ml-1 flex items-center">
                 <el-icon class="relative top-px">
@@ -25,15 +25,6 @@
                     </span>
                 </div>
                 <div class="flex items-center divide-x" :class="{ hidden: currentIdx != vote.voteId }">
-                    <RouterLink to=""
-                        class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
-                        <span>
-                            <el-icon>
-                                <Edit />
-                            </el-icon>
-                        </span>
-                        编辑
-                    </RouterLink>
                     <RouterLink :to="'/vote/' + vote.voteId"
                         class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
                         <span>
@@ -43,7 +34,8 @@
                         </span>
                         查看
                     </RouterLink>
-                    <button class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
+                    <button @click="copytoClipboard()"
+                        class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
                         <span>
                             <el-icon>
                                 <Edit />
@@ -63,13 +55,17 @@
                 </div>
             </div>
         </div>
+        <div v-if="copyStatus"
+            class="rounded bg-cyan-50 flex items-center justify-center p-2 fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            {{ copyRes }}
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import axios from 'axios';
 import { ref } from 'vue';
-import { useLogin, useSelectOne } from './hooks';
+import { useCopyToClipboard, useLogin, useSelectOne } from './hooks';
 
 type VoteInfo = {
     userId: string,
@@ -90,6 +86,17 @@ if (isLogin) {
     myVotes.value = res.data.result
 }
 var [currentIdx, set] = useSelectOne()
+var copyStatus = ref(false)
+var copyRes = ref('')
+var urlForCopy = ref(location.href)
+
+async function copytoClipboard() {
+    var res = await useCopyToClipboard(urlForCopy.value, copyStatus)
+    copyRes.value = res
+    setTimeout(() => {
+        copyStatus.value = false
+    }, 800)
+}
 
 function deleteVote(voteId: number) {
     axios.delete(`/vote/${voteId}`)
