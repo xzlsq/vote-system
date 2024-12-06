@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="isLogin">
         <h1 class="font-bold text-2xl flex items-center p-4">
             <RouterLink to="/me" class="ml-1 flex items-center">
                 <el-icon class="relative top-px">
@@ -9,8 +9,9 @@
             <span class="ml-4 relative top-px">我的投票列表</span>
         </h1>
         <div class="pt-2 divide-y  mb-14">
-            <div @click="set(vote.voteId)" class="divide-y" v-for="vote of myVotes" :key="vote.voteId">
-                <div class="hover:bg-neutral-200 h-14 bg-white flex items-center justify-between p-4">
+            <div class="divide-y" v-for="vote of myVotes" :key="vote.voteId">
+                <div @click="set(vote.voteId)"
+                    class="hover:bg-neutral-200 h-14 bg-white flex items-center justify-between p-4">
                     <span>{{ vote.title }}</span>
                     <span :class="{ hidden: currentIdx == vote.voteId }">
                         <el-icon>
@@ -42,16 +43,15 @@
                         </span>
                         查看
                     </RouterLink>
-                    <RouterLink to=""
-                        class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
+                    <button class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
                         <span>
                             <el-icon>
                                 <Edit />
                             </el-icon>
                         </span>
                         分享
-                    </RouterLink>
-                    <RouterLink to=""
+                    </button>
+                    <button @click="deleteVote(vote.voteId)"
                         class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
                         <span>
                             <el-icon>
@@ -59,7 +59,7 @@
                             </el-icon>
                         </span>
                         删除
-                    </RouterLink>
+                    </button>
                 </div>
             </div>
         </div>
@@ -90,5 +90,16 @@ if (isLogin) {
     myVotes.value = res.data.result
 }
 var [currentIdx, set] = useSelectOne()
+
+function deleteVote(voteId: number) {
+    axios.delete(`/vote/${voteId}`)
+        .then(() => {
+            // debugger
+            var idx = myVotes.value.findIndex((vote: any) => vote.voteId == voteId)
+            myVotes.value.splice(idx, 1)
+        }, (rej) => {
+            console.log(rej)
+        })
+}
 
 </script>
