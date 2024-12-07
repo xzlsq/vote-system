@@ -100,6 +100,7 @@ export function useEleSize(eleDom: any, isAnony: boolean) {
 
 export async function useCopyToClipboard(text: string) {
     var res = ''
+    // 该API只有在HTTPS和开发环境(localhost)的情况下才能使用
     await navigator.clipboard.writeText(text)
         .then(() => {
             res = '复制成功'

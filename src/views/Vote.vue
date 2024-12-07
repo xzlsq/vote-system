@@ -1,7 +1,7 @@
 <template>
     <div v-if="isLogin">
         <van-nav-bar class="!bg-gray-300" :title="'腾讯投票'" left-arrow @click-left="router.push('/my-votes')" />
-        <div class="p-2 bg-gray-100 h-[100vh]">
+        <div class="p-2 bg-gray-100">
             <div class="my-8 mx-4 relative">
                 <h2 class="text-3xl mb-2">{{ voteInfo.vote.title }}</h2>
                 <h3>{{ voteInfo.vote.desc }}<span class="text-sky-500">[{{ type }}]</span></h3>
@@ -12,17 +12,8 @@
                     </el-icon>
                 </button>
             </div>
-            <div v-if="showShare"
-                class="w-full shadow border h-12 rounded bg-white flex items-center justify-center p-2 fixed left-1/2 bottom-8 -translate-x-1/2">
-                <button @click="shareVote()">
-                    复制链接
-                </button>
-            </div>
-            <div v-if="copyStatus"
-                class="rounded bg-cyan-50 flex items-center justify-center p-2 fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                {{ copyRes }}
-            </div>
-
+            <ActionSheet v-model:show="showShare" :actions="actions" @select="onShareVote" description="分享到...">
+            </ActionSheet>
             <ul class="space-y-2">
                 <li class="" v-for="(option, idx) of options" :key="idx">
                     <div @click="handleOptionClick(option.optionId)" class="h-12 px-4 shadow bg-white">
@@ -79,6 +70,8 @@ import axios from 'axios';
 import { computed, onMounted, ref, useTemplateRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import { useCopyToClipboard, useEleSize, useLogin } from './hooks';
+import { ActionSheet, type ActionSheetAction, showToast } from 'vant';
+import copy from 'copy-to-clipboard';
 
 var isLogin = useLogin()
 
@@ -208,17 +201,27 @@ function showMoreIcon(optionId: number) {
 
 // 分享组件的显示状态
 var showShare = ref(false)
-var copyStatus = ref(false)
-var copyRes = ref('')
-// 显示分享组件
-async function shareVote() {
-    var res = await useCopyToClipboard(location.href)
-    copyStatus.value = true
+const actions = [
+    { name: '复制链接' },
+    { name: '分享到朋友圈' },   // 在微信中开发使用微信的API才能使用
+    { name: '发送给朋友' }, // 在微信中开发使用微信的API才能使用
+];
+/**
+ * 分享投票事件处理函数
+ * navigator.share() 在HTTPS环境下可以选择使用
+ * @param item 
+ * @param index 
+ */
+async function onShareVote(item: ActionSheetAction, index: number) {
+    if (item.name == '复制链接') {
+        copy(location.href)
+        showToast('复制成功');
+    } else if (item.name == '分享到朋友圈') {
+        // 开发微信小程序时使用微信提供的API
+    } else if (item.name == '发送给朋友') {
+        // 开发微信小程序时使用微信提供的API
+    }
     showShare.value = false
-    copyRes.value = res
-    setTimeout(() => {
-        copyStatus.value = false
-    }, 800)
 }
 
 // 第idx个选项下显示的头像

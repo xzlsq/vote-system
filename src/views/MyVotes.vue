@@ -27,8 +27,10 @@
                         </span>
                         查看
                     </RouterLink>
-                    <button @click="copytoClipboard()"
-                        class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
+                    <button @click="() => {
+                        showShare = true
+                        shareVoteId = vote.voteId
+                    }" class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
                         <span>
                             <el-icon>
                                 <Edit />
@@ -36,6 +38,8 @@
                         </span>
                         分享
                     </button>
+                    <ActionSheet v-model:show="showShare" :actions="actions" @select="onShareVote" description="分享到...">
+                    </ActionSheet>
                     <button @click="deleteVote(vote.voteId)"
                         class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
                         <span>
@@ -48,18 +52,16 @@
                 </div>
             </div>
         </div>
-        <div v-if="copyStatus"
-            class="rounded bg-cyan-50 flex items-center justify-center p-2 fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            {{ copyRes }}
-        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import axios from 'axios';
 import { ref } from 'vue';
-import { useCopyToClipboard, useLogin, useSelectOne } from './hooks';
+import { useLogin, useSelectOne } from './hooks';
 import { useRouter } from 'vue-router';
+import { ActionSheet, type ActionSheetAction, showToast } from 'vant';
+import copy from 'copy-to-clipboard';
 
 type VoteInfo = {
     userId: string,
@@ -81,17 +83,32 @@ if (isLogin) {
 }
 var router = useRouter()
 var [currentIdx, set] = useSelectOne()
-var copyStatus = ref(false)
-var copyRes = ref('')
-var urlForCopy = ref(location.href)
 
-async function copytoClipboard() {
-    var res = await useCopyToClipboard(urlForCopy.value)
-    copyStatus.value = true
-    copyRes.value = res
-    setTimeout(() => {
-        copyStatus.value = false
-    }, 800)
+// 分享组件的显示状态
+var showShare = ref(false)
+const actions = [
+    { name: '复制链接' },
+    { name: '分享到朋友圈' },   // 在微信中开发使用微信的API才能使用
+    { name: '发送给朋友' }, // 在微信中开发使用微信的API才能使用
+];
+// 要分享的投票Id
+var shareVoteId = ref(-1)
+/**
+ * 分享投票事件处理函数
+ * navigator.share() 在https环境下可以使用该方法进行分享
+ * @param item 
+ * @param index 
+ */
+async function onShareVote(item: ActionSheetAction, index: number) {
+    if (item.name == '复制链接') {
+        copy(location.origin + `/#/vote/${shareVoteId.value}`)
+        showToast('复制成功');
+    } else if (item.name == '分享到朋友圈') {
+        // 开发微信小程序时使用微信提供的API
+    } else if (item.name == '发送给朋友') {
+        // 开发微信小程序时使用微信提供的API
+    }
+    showShare.value = false
 }
 
 function deleteVote(voteId: number) {
