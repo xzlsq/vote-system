@@ -2,7 +2,7 @@
     <div v-if="isLogin" class="h-full">
         <van-nav-bar class="!bg-gray-300" :title="'我的投票列表'" left-arrow @click-left="router.push('/me')" />
         <div class="pt-2 divide-y  mb-14">
-            <div class="divide-y" v-for="vote of myVotes" :key="vote.voteId">
+            <div class="divide-y" v-for="(vote, idx) of myVotes" :key="vote.voteId">
                 <div @click="set(vote.voteId)"
                     class="hover:bg-neutral-200 h-14 bg-white flex items-center justify-between p-4">
                     <span>{{ vote.title }}</span>
@@ -32,20 +32,16 @@
                         shareVoteId = vote.voteId
                     }" class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
                         <span>
-                            <el-icon>
-                                <Edit />
-                            </el-icon>
+                            <van-icon name="link-o" />
                         </span>
                         分享
                     </button>
                     <ActionSheet v-model:show="showShare" :actions="actions" @select="onShareVote" description="分享到...">
                     </ActionSheet>
-                    <button @click="deleteVote(vote.voteId)"
+                    <button @click="deleteVote(vote.voteId, idx, vote.title)"
                         class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
                         <span>
-                            <el-icon>
-                                <Edit />
-                            </el-icon>
+                            <van-icon name="delete-o" />
                         </span>
                         删除
                     </button>
@@ -60,7 +56,7 @@ import axios from 'axios';
 import { ref } from 'vue';
 import { useLogin, useSelectOne } from './hooks';
 import { useRouter } from 'vue-router';
-import { ActionSheet, type ActionSheetAction, showToast } from 'vant';
+import { ActionSheet, type ActionSheetAction, showToast, showConfirmDialog } from 'vant';
 import copy from 'copy-to-clipboard';
 
 type VoteInfo = {
@@ -111,15 +107,16 @@ async function onShareVote(item: ActionSheetAction, index: number) {
     showShare.value = false
 }
 
-function deleteVote(voteId: number) {
-    axios.delete(`/vote/${voteId}`)
-        .then(() => {
-            // debugger
-            var idx = myVotes.value.findIndex((vote: any) => vote.voteId == voteId)
-            myVotes.value.splice(idx, 1)
-        }, (rej) => {
-            console.log(rej)
+async function deleteVote(voteId: number, idx: number, title: string) {
+    try {
+        await showConfirmDialog({
+            message: `确定要删除"${title}"吗？`,
         })
+
+        await axios.delete(`/vote/${voteId}`)
+        myVotes.value.splice(idx, 1)
+        showToast('删除成功');
+    } catch { }
 }
 
 </script>
