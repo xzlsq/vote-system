@@ -10,6 +10,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 import Main from './Main.vue'
 import router from './router'
+import { NavBar } from 'vant';
 
 const app = createApp(Main)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -19,5 +20,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
+app.use(NavBar)
 
 app.mount('#app')
