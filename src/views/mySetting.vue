@@ -1,13 +1,6 @@
 <template>
     <div class="w-full">
-        <h1 class="font-bold text-2xl flex items-center p-4">
-            <RouterLink to="/me" class="ml-1 flex items-center">
-                <el-icon class="relative top-px">
-                    <ArrowLeftBold />
-                </el-icon>
-            </RouterLink>
-            <span class="ml-4 relative top-px">个人设置</span>
-        </h1>
+        <van-nav-bar class="!bg-gray-300" :title="'个人设置'" left-arrow @click-left="router.push('/me')" />
         <div class="space-y-6">
             <div class="flex items-center justify-center h-[120px]">
                 <img class="rounded-full w-20 h-20" src="https://dummyimage.com/64x64/000/fff" alt="">
@@ -40,7 +33,7 @@ var isLogin = useLogin()
 var router = useRouter()
 var userStore = useVoteStore()
 var userName = ref('')
-if (isLogin) {
+if (isLogin && userStore.user) {
     userName.value = userStore.user.name
 }
 

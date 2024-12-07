@@ -31,14 +31,7 @@ async function login() {
 </script>
 
 <template>
-    <h1 class="text-2xl flex items-center p-4">
-        <RouterLink to="/" class="ml-1 flex items-center">
-            <el-icon class="relative top-px">
-                <ArrowLeftBold />
-            </el-icon>
-        </RouterLink>
-        <span class="ml-4 relative top-px">登入</span>
-    </h1>
+    <van-nav-bar class="!bg-gray-300" :title="'登入'" />
     <div class="flex flex-col p-4 space-y-4">
         <input class="border h-8 outline-none rounded border-gray-400 px-2" type="text" v-model="userName"
             placeholder="用户名">

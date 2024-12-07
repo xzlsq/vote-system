@@ -1,13 +1,6 @@
 <template>
     <div v-if="isLogin" class="h-full">
-        <h1 class="font-bold text-2xl flex items-center p-4">
-            <RouterLink to="/me" class="ml-1 flex items-center">
-                <el-icon class="relative top-px">
-                    <ArrowLeftBold />
-                </el-icon>
-            </RouterLink>
-            <span class="ml-4 relative top-px">我的投票列表</span>
-        </h1>
+        <van-nav-bar class="!bg-gray-300" :title="'我的投票列表'" left-arrow @click-left="router.push('/me')" />
         <div class="pt-2 divide-y  mb-14">
             <div class="divide-y" v-for="vote of myVotes" :key="vote.voteId">
                 <div @click="set(vote.voteId)"
@@ -66,6 +59,7 @@
 import axios from 'axios';
 import { ref } from 'vue';
 import { useCopyToClipboard, useLogin, useSelectOne } from './hooks';
+import { useRouter } from 'vue-router';
 
 type VoteInfo = {
     userId: string,
@@ -85,6 +79,7 @@ if (isLogin) {
     res = await axios.get('/vote')
     myVotes.value = res.data.result
 }
+var router = useRouter()
 var [currentIdx, set] = useSelectOne()
 var copyStatus = ref(false)
 var copyRes = ref('')

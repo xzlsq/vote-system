@@ -1,13 +1,6 @@
 <template>
     <div>
-        <h1 class="font-bold text-2xl flex items-center p-4">
-            <RouterLink to="/" class="ml-1 flex items-center">
-                <el-icon class="relative top-px">
-                    <ArrowLeftBold />
-                </el-icon>
-            </RouterLink>
-            <span class="ml-4 relative top-px">创建{{ type }}投票</span>
-        </h1>
+        <van-nav-bar class="!bg-gray-300" :title="'创建' + type + '投票'" left-arrow @click-left="router.go(-1)" />
         <div class="p-2 overflow-auto">
             <div class="bg-white space-y-3 overflow-auto">
                 <div class="flex flex-col pr-1 ml-1">
@@ -41,7 +34,7 @@
                 <div class="flex items-center justify-between h-12">
                     <h1>截至日期</h1>
                     <!-- <input type="date"> -->
-                    <button @click="showBottom = !showBottom">{{ deadDate.join('-') + deadTime.join(':') }}</button>
+                    <button @click="showBottom = true">{{ deadDate.join('-') + deadTime.join(':') }}</button>
                     <Popup v-model:show="showBottom" position="bottom" :style="{ height: '35%' }">
                         <PickerGroup title="预约日期" :tabs="['选择日期', '选择时间']" @confirm="showBottom = false"
                             @cancel="showBottom = false">
@@ -83,7 +76,7 @@ var voteStore = useVoteStore()
 var router = useRouter()
 var route = useRoute()
 var type = computed(() => route.query.type == 'single' ? '单选' : '多选')
-var showBottom = ref(true)
+var showBottom = ref(false)
 
 useLogin()
 

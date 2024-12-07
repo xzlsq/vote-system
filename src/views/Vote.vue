@@ -1,13 +1,6 @@
 <template>
     <div v-if="isLogin">
-        <h1 class="font-bold text-2xl flex items-center p-4">
-            <button @click="router.push('/my-votes')" class="ml-1 flex items-center">
-                <el-icon class="relative top-px">
-                    <ArrowLeftBold />
-                </el-icon>
-            </button>
-            <span class="ml-4 relative top-px">腾讯投票</span>
-        </h1>
+        <van-nav-bar class="!bg-gray-300" :title="'腾讯投票'" left-arrow @click-left="router.push('/my-votes')" />
         <div class="p-2 bg-gray-100 h-[100vh]">
             <div class="my-8 mx-4 relative">
                 <h2 class="text-3xl mb-2">{{ voteInfo.vote.title }}</h2>
