@@ -91,7 +91,8 @@ var copyRes = ref('')
 var urlForCopy = ref(location.href)
 
 async function copytoClipboard() {
-    var res = await useCopyToClipboard(urlForCopy.value, copyStatus)
+    var res = await useCopyToClipboard(urlForCopy.value)
+    copyStatus.value = true
     copyRes.value = res
     setTimeout(() => {
         copyStatus.value = false

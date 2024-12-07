@@ -41,9 +41,13 @@
                 <div class="flex items-center justify-between h-12">
                     <h1>截至日期</h1>
                     <!-- <input type="date"> -->
-                    <button @click="showBottom = !showBottom">选择日期</button>
-                    <Popup v-model:show="showBottom" position="bottom" :style="{ height: '30%' }">
-                        <DatePicker></DatePicker>
+                    <button @click="showBottom = !showBottom">{{ deadDate.join('-') + deadTime.join(':') }}</button>
+                    <Popup v-model:show="showBottom" position="bottom" :style="{ height: '35%' }">
+                        <PickerGroup title="预约日期" :tabs="['选择日期', '选择时间']" @confirm="showBottom = false"
+                            @cancel="showBottom = false">
+                            <DatePicker v-model="deadDate" :min-date="new Date()" />
+                            <TimePicker v-model="deadTime" />
+                        </PickerGroup>
                     </Popup>
                 </div>
                 <div class="flex items-center justify-between h-12">
@@ -70,7 +74,9 @@ import { useRoute, useRouter } from 'vue-router';
 import { useVoteStore } from '@/stores/vote';
 import axios from 'axios';
 import { useLogin } from './hooks';
+import { PickerGroup } from 'vant';
 import { DatePicker } from 'vant';
+import { TimePicker } from 'vant';
 import { Popup } from 'vant';
 
 var voteStore = useVoteStore()
@@ -85,7 +91,10 @@ var multiple = type.value == '多选'
 var title = ref('')
 var desc = ref('')
 var options = ref(['', ''])
-var deadline = ref(new Date(Date.now() + 86400000 * 7))
+// 默认七天之后过期
+var deadDate = ref([new Date().getFullYear().toString(), new Date().getMonth().toString(), (new Date().getDay() + 8).toString()])
+var deadTime = ref([new Date().getHours().toString(), (new Date().getMinutes() + 10).toString()])
+var deadline = computed(() => new Date(deadDate.value.join('-') + ' ' + deadTime.value.join(':')))
 var anonymous = ref(false)
 var spread = ref(false)
 

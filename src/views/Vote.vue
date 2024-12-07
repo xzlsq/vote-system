@@ -12,11 +12,22 @@
             <div class="my-8 mx-4 relative">
                 <h2 class="text-3xl mb-2">{{ voteInfo.vote.title }}</h2>
                 <h3>{{ voteInfo.vote.desc }}<span class="text-sky-500">[{{ type }}]</span></h3>
-                <button class="absolute top-0 right-0 bg-blue-500 flex items-center rounded-full p-3">
+                <button @click="showShare = !showShare"
+                    class="absolute top-0 right-0 bg-blue-500 flex items-center rounded-full p-3">
                     <el-icon :size="24" color="white">
                         <Share />
                     </el-icon>
                 </button>
+            </div>
+            <div v-if="showShare"
+                class="w-full shadow border h-12 rounded bg-white flex items-center justify-center p-2 fixed left-1/2 bottom-8 -translate-x-1/2">
+                <button @click="shareVote()">
+                    复制链接
+                </button>
+            </div>
+            <div v-if="copyStatus"
+                class="rounded bg-cyan-50 flex items-center justify-center p-2 fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                {{ copyRes }}
             </div>
 
             <ul class="space-y-2">
@@ -59,8 +70,7 @@
                 </li>
             </ul>
             <div class="flex justify-between items-center text-gray-400 h-12">
-                <span>投票截止：{{ voteInfo.vote.deadline }}</span>
-                <!-- <span>吐个槽</span> -->
+                <span>投票截止：{{ new Date(voteInfo.vote.deadline).toLocaleString() }}</span>
             </div>
 
             <button v-if="showCommitButton" @click="handledAnonymousSubmit()"
@@ -75,7 +85,7 @@ import { useVoteStore } from '@/stores/vote';
 import axios from 'axios';
 import { computed, onMounted, ref, useTemplateRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
-import { useEleSize, useLogin } from './hooks';
+import { useCopyToClipboard, useEleSize, useLogin } from './hooks';
 
 var isLogin = useLogin()
 
@@ -119,8 +129,11 @@ var votesRatio = computed(() => {
     var ratio: any = {}
 
     for (var optionId in OptionVotes.value) {
-        if (totalUsers > 0) {
+        if (totalUsers >= 1) {
             ratio[optionId] = (OptionVotes.value[optionId].length / totalUsers * 100).toFixed(1) + '%'
+            if (ratio[optionId].at(-2) == '0') {
+                ratio[optionId] = ratio[optionId].slice(0, -3) + '%'
+            }
         } else {
             ratio[optionId] = '0%'
         }
@@ -200,18 +213,30 @@ function showMoreIcon(optionId: number) {
     }
 }
 
+// 分享组件的显示状态
+var showShare = ref(false)
+var copyStatus = ref(false)
+var copyRes = ref('')
+// 显示分享组件
+async function shareVote() {
+    var res = await useCopyToClipboard(location.href)
+    copyStatus.value = true
+    showShare.value = false
+    copyRes.value = res
+    setTimeout(() => {
+        copyStatus.value = false
+    }, 800)
+}
+
 // 第idx个选项下显示的头像
 function visibleAvatars(optionIdx: number) {
     var { optionId } = options[optionIdx]
-
     if (showRestAvatar.value[optionIdx]) {
         return OptionVotes.value[optionId]
     } else {
         return OptionVotes.value[optionId].slice(0, avatarsNum.value)
     }
 }
-
-
 
 async function handleOptionClick(optionId: number) {
     try {

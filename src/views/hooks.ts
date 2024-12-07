@@ -98,15 +98,13 @@ export function useEleSize(eleDom: any, isAnony: boolean) {
     return windowSize
 }
 
-export async function useCopyToClipboard(text: string, status: Ref) {
+export async function useCopyToClipboard(text: string) {
     var res = ''
     await navigator.clipboard.writeText(text)
         .then(() => {
-            status.value = true
             res = '复制成功'
         })
         .catch(err => {
-            status.value = true
             res = '复制失败'
         });
 
