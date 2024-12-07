@@ -41,8 +41,10 @@
                 <div class="flex items-center justify-between h-12">
                     <h1>截至日期</h1>
                     <!-- <input type="date"> -->
-                    <el-date-picker xstyle="width: 170px;" class="!w-44" format="YYYY-MM-DD HH:mm" v-model="deadline"
-                        type="datetime" placeholder="请截至日期" />
+                    <button @click="showBottom = !showBottom">选择日期</button>
+                    <Popup v-model:show="showBottom" position="bottom" :style="{ height: '30%' }">
+                        <DatePicker></DatePicker>
+                    </Popup>
                 </div>
                 <div class="flex items-center justify-between h-12">
                     <h1>匿名投票</h1>
@@ -68,11 +70,14 @@ import { useRoute, useRouter } from 'vue-router';
 import { useVoteStore } from '@/stores/vote';
 import axios from 'axios';
 import { useLogin } from './hooks';
+import { DatePicker } from 'vant';
+import { Popup } from 'vant';
 
 var voteStore = useVoteStore()
 var router = useRouter()
 var route = useRoute()
 var type = computed(() => route.query.type == 'single' ? '单选' : '多选')
+var showBottom = ref(true)
 
 useLogin()
 
