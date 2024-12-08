@@ -67,7 +67,7 @@
 <script setup lang="ts">
 import { useVoteStore } from '@/stores/vote';
 import axios from 'axios';
-import { computed, onMounted, ref, useTemplateRef } from 'vue'
+import { computed, onMounted, ref, useTemplateRef, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import { useCopyToClipboard, useEleSize, useLogin } from './hooks';
 import { ActionSheet, type ActionSheetAction, showToast } from 'vant';
@@ -294,5 +294,10 @@ onMounted(() => {
         // 收到新的投票结果后替换旧的投票结果
         voteInfo.value.userVotes = userVotes
     }
+    // 组件卸载后断开webSoket连接
+    onUnmounted(() => {
+        ws.close()
+    })
 })
+
 </script>
