@@ -21,7 +21,8 @@ export default defineConfig({
       '/realtime-voteinfo': {
         target: 'http://localhost:' + port + '/',
         ws: true,
-      }
+      },
+      '/upload': 'http://localhost:' + port + '/',
     }
   },
   plugins: [
