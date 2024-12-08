@@ -34,7 +34,7 @@
                 <div class="flex items-center justify-between h-12">
                     <h1>截至日期</h1>
                     <!-- <input type="date"> -->
-                    <button @click="showBottom = true">{{ deadDate.join('-') + deadTime.join(':') }}</button>
+                    <button @click="showBottom = true">{{ deadDate.join('-') + ' ' + deadTime.join(':') }}</button>
                     <Popup v-model:show="showBottom" position="bottom" :style="{ height: '35%' }">
                         <PickerGroup title="预约日期" :tabs="['选择日期', '选择时间']" @confirm="showBottom = false"
                             @cancel="showBottom = false">
@@ -67,7 +67,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useVoteStore } from '@/stores/vote';
 import axios from 'axios';
 import { useLogin } from './hooks';
-import { PickerGroup } from 'vant';
+import { PickerGroup, showToast } from 'vant';
 import { DatePicker } from 'vant';
 import { TimePicker } from 'vant';
 import { Popup } from 'vant';
@@ -85,7 +85,7 @@ var title = ref('')
 var desc = ref('')
 var options = ref(['', ''])
 // 默认七天之后过期
-var deadDate = ref([new Date().getFullYear().toString(), new Date().getMonth().toString(), (new Date().getDay() + 8).toString()])
+var deadDate = ref([new Date().getFullYear().toString(), (new Date().getMonth() + 1).toString(), (new Date().getDay() + 8).toString()])
 var deadTime = ref([new Date().getHours().toString(), (new Date().getMinutes() + 10).toString()])
 var deadline = computed(() => new Date(deadDate.value.join('-') + ' ' + deadTime.value.join(':')))
 var anonymous = ref(false)
@@ -100,7 +100,12 @@ function deleteOption(idx: number) {
 }
 
 async function create() {
-    // debugger
+    // 如果 title 和 options为空则不能发送
+    if (!title.value || !options.value) {
+        showToast('标题或选项不能为空');
+        return
+    }
+
     var voteInfo = {
         title: title.value,
         desc: desc.value,
