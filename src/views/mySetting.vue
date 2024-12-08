@@ -1,9 +1,9 @@
 <template>
-    <div class="w-full">
+    <div class="w-full" v-if="isLogin">
         <van-nav-bar class="!bg-gray-300" :title="'个人设置'" left-arrow @click-left="router.push('/me')" />
         <div class="space-y-6">
             <div class="flex items-center justify-center h-[120px]">
-                <img class="rounded-full w-20 h-20" src="https://dummyimage.com/64x64/000/fff" alt="">
+                <img class="rounded-full w-20 h-20" :src="userStore.user?.avatar" alt="">
             </div>
             <div class="flex items-center justify-between p-4 h-14 bg-white">
                 <span>昵称</span>

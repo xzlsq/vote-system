@@ -1,9 +1,9 @@
 <template>
-    <div class="w-full">
+    <div class="w-full" v-if="isLogin">
         <van-nav-bar class="!bg-gray-300" :title="'我的'" />
-        <div class="space-y-6">
+        <div class="space-y">
             <div class="flex items-center gap-2 ml-4 h-[120px]">
-                <img class="rounded-full" width="64" height="64" src="https://dummyimage.com/64x64/000/fff" alt="">
+                <img class="rounded-full w-[64px] h-[64px]" :src="userStore.user?.avatar" alt="">
                 <span>{{ userName }}</span>
             </div>
             <div class="flex flex-col divide-y">
@@ -23,14 +23,14 @@
                         </el-icon>
                     </span>
                 </RouterLink>
-                <RouterLink class="hover:bg-neutral-200 h-14 bg-white flex items-center p-4" to="">
+                <!-- <RouterLink class="hover:bg-neutral-200 h-14 bg-white flex items-center p-4" to="">
                     反馈建议
                     <span class="ml-auto relative top-px">
                         <el-icon>
                             <ArrowRightBold />
                         </el-icon>
                     </span>
-                </RouterLink>
+                </RouterLink> -->
             </div>
         </div>
     </div>
