@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { useVoteStore } from '@/stores/vote';
+import { showToast } from 'vant';
 
 
 var userName = ref('')
@@ -24,7 +25,7 @@ async function login() {
         // console.log(userStore.user)
         router.replace(next)
     } catch (e) {
-        alert('login failed')
+        showToast('用户名或密码错误')
     }
 }
 
@@ -39,5 +40,8 @@ async function login() {
             placeholder="密码">
         <button @click="login()"
             class="block mx-auto w-[90%] h-10 rounded-md border border-blue-500 text-blue-500">登入</button>
+        <router-link
+            class="mx-auto w-[90%] flex items-center justify-center h-10 rounded-md border border-blue-500 text-blue-500"
+            to="/register">注册</router-link>
     </div>
 </template>
