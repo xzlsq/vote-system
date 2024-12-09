@@ -69,7 +69,7 @@ import { useVoteStore } from '@/stores/vote';
 import axios from 'axios';
 import { computed, onMounted, ref, useTemplateRef, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
-import { useCopyToClipboard, useEleSize, useLogin } from './hooks';
+import { useEleSize, useLogin } from './hooks';
 import { ActionSheet, type ActionSheetAction, showToast } from 'vant';
 import copy from 'copy-to-clipboard';
 
@@ -198,6 +198,15 @@ function showMoreIcon(optionId: number) {
         return false
     }
 }
+// 第idx个选项下显示的头像
+function visibleAvatars(optionIdx: number) {
+    var { optionId } = options[optionIdx]
+    if (showRestAvatar.value[optionIdx]) {
+        return OptionVotes.value[optionId]
+    } else {
+        return OptionVotes.value[optionId].slice(0, avatarsNum.value)
+    }
+}
 
 // 分享组件的显示状态
 var showShare = ref(false)
@@ -224,15 +233,7 @@ async function onShareVote(item: ActionSheetAction, index: number) {
     showShare.value = false
 }
 
-// 第idx个选项下显示的头像
-function visibleAvatars(optionIdx: number) {
-    var { optionId } = options[optionIdx]
-    if (showRestAvatar.value[optionIdx]) {
-        return OptionVotes.value[optionId]
-    } else {
-        return OptionVotes.value[optionId].slice(0, avatarsNum.value)
-    }
-}
+
 
 async function handleOptionClick(optionId: number) {
     try {

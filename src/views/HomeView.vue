@@ -5,7 +5,7 @@ import { Tabbar, TabbarItem } from 'vant';
 </script>
 
 <template>
-  <main class="flex flex-col h-[100vh] w-full mx-auto">
+  <main class="flex flex-col h-full w-full mx-auto">
     <RouterView class="grow" />
     <div class="flex h-12 w-full !bg-gray-200">
       <Tabbar route>

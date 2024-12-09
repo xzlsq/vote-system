@@ -74,7 +74,6 @@ function register() {
         email: email.value,
         avatar: avatarUrl.value
     }).then((res) => {
-        console.log(res)
         if (res.data.code == 0) {
             router.replace('/login')
         }

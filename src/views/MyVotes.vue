@@ -32,7 +32,7 @@
                         shareVoteId = vote.voteId
                     }" class="hover:bg-neutral-200 basic-0 grow h-14 flex flex-col items-center justify-center">
                         <span>
-                            <van-icon name="link-o" />
+                            <van-icon name="share-o" />
                         </span>
                         分享
                     </button>
@@ -58,6 +58,7 @@ import { useLogin, useSelectOne } from './hooks';
 import { useRouter } from 'vue-router';
 import { ActionSheet, type ActionSheetAction, showToast, showConfirmDialog } from 'vant';
 import copy from 'copy-to-clipboard';
+// import $$T from '@/locales/zh-CN.js'
 
 type VoteInfo = {
     userId: string,
