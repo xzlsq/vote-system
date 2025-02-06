@@ -85,7 +85,7 @@ var title = ref('')
 var desc = ref('')
 var options = ref(['', ''])
 // 默认七天之后过期
-var deadDate = ref([new Date().getFullYear().toString(), (new Date().getMonth() + 1).toString(), (new Date().getDay() + 8).toString()])
+var deadDate = ref([new Date().getFullYear().toString(), (new Date().getMonth() + 1).toString(), (new Date().getDate() + 8).toString()])
 var deadTime = ref([new Date().getHours().toString(), (new Date().getMinutes() + 10).toString()])
 var deadline = computed(() => new Date(deadDate.value.join('-') + ' ' + deadTime.value.join(':')))
 var anonymous = ref(false)
